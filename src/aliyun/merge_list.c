@@ -18,9 +18,50 @@ struct list_s {
 };
 
 
-static void 
-
 static node_t *createNode(unsigned int data);
+void sort(list_t **list);
+void merge(list_t *la, list_t *lb, list_t **lc);
+void list_travel(list_t *list);
+static void list_add2head(list_t **list, unsigned int data);
+static list_t *newList();
+void destory_list(list_t *list);
+
+int get_array_len(int a[]);
+int 
+get_array_len(int a[]) {
+	
+}
+
+void insert_sort(int a[]);
+void 
+insert_sort(int a[]) {
+
+	int len = a.length; 
+	int i;
+	for(i=0; i < 5; ++i) {
+		printf("item: %d\n", a[i]);
+	}	
+}
+
+
+void 
+destory_list(list_t *list) {
+
+	node_t *p;
+	node_t *curr;
+
+
+	curr = list->header->next;
+	
+	while(curr != NULL) {
+		p = curr;
+		free(p);
+		curr = curr->next;
+	}
+
+	free(list->header);
+	//free(list);
+}
 
 static 
 node_t *createNode(unsigned int data) {
@@ -36,21 +77,19 @@ node_t *createNode(unsigned int data) {
 	return node;
 }
 
-void sort(list_t **list);
-void merge(list_t *la, list_t *lb, list_t **lc);
 
 void 
 sort(list_t **list) {
 
 }
 
-void list_travel(list_t *list);
 void 
 list_travel(list_t *list) {
 	
 	node_t *node;
 	
 	node = list->header->next;
+
 	while(node) {
 		printf("node value: %d\n", node->data);
 		node = node->next;
@@ -92,7 +131,6 @@ merge(list_t *la, list_t *lb, list_t **lc) {
 }
 
 
-static void list_add2head(list_t **list, unsigned int data);
 static void 
 list_add2head(list_t **list, unsigned int data) {
 
@@ -103,7 +141,6 @@ list_add2head(list_t **list, unsigned int data) {
 	(*list)->header->next = node;
 }
 
-static list_t *newList();
 
 static 
 list_t *newList() {
@@ -120,6 +157,10 @@ list_t *newList() {
 
 int main(void) {
 
+	int a[5] = {1,2,3,4,5};
+
+	insert_sort(a);
+
 	list_t *pa, *pb;
 	
 	pa = newList();
@@ -131,6 +172,12 @@ int main(void) {
 	list_add2head(&pa, 1);
 
 	list_travel(pa);
+
+	destory_list(pa);
+	destory_list(pb);
+
+	free(pa);
+	free(pb);
 
 	return 0;	
 }
