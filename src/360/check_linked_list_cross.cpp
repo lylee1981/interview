@@ -28,6 +28,80 @@ static void list_add2head(list_t **list, unsigned int data);
 static list_t *newList();
 void destory_list(list_t *list);
 
+int32_t check_cross(list_t *la, list_t *lb, node_t **crossed);
+
+int32_t get_linked_list_length(list_t *list);
+
+int32_t 
+get_linked_list_length(list_t *list) {
+	
+	node_t *p;
+
+	if(list == NULL || list->header->next == NULL) {
+		return 0;	
+	}
+
+	p = list->header->next;
+
+	int32_t list_length = 0;
+	while(p) {
+		list_length++;
+		p = p->next;
+	}
+
+	return list_length;
+}
+
+
+
+int32_t 
+check_cross(list_t *la, list_t *lb, node_t **crossed) {
+
+	node_t *pa, *pb;
+	node_t *start, *another;
+	int32_t diff;
+	int32_t is_crossed = 0;
+	int32_t la_length, lb_length;
+
+	pa = la->header->next;
+	pb = lb->header->next;
+
+	la_length = get_linked_list_length(la);
+	lb_length = get_linked_list_length(lb);
+
+	printf("la 's length: %d\n", la_length);
+	printf("lb 's length: %d\n", lb_length);
+
+	if(la_length >= lb_length) {
+		diff = la_length - lb_length;
+		start = pa;
+		another = pb;
+	} else {
+		diff = lb_length - la_length;
+		start = pb;
+		another = pa;
+	}
+
+	while(diff && start != NULL) {
+		diff--;
+		start = start->next;
+	}
+
+	while(start && another) {
+		if(start == another) {
+			*crossed = start;
+			is_crossed = 1;
+			return is_crossed;
+		}
+		start = start->next;
+		another = another->next;
+	}
+
+	*crossed = NULL;
+	is_crossed = 0;
+	return is_crossed;
+}
+
 int get_array_len(int a[]);
 int 
 get_array_len(int a[]) {
@@ -123,7 +197,7 @@ node_t *createNode(unsigned int data) {
 
 	node_t *node;
 
-	node = malloc(sizeof(struct node_s));
+	node = (node_t*)malloc(sizeof(struct node_s));
 	assert(node != NULL);
 
 	node->data = data;
@@ -156,7 +230,7 @@ list_travel(list_t *list) {
 	node = list->header->next;
 
 	while(node) {
-		printf("node value: %d\n", node->data);
+		printf("node address: %p, value: %d\n", node, node->data);
 		node = node->next;
 	}
 }
@@ -277,10 +351,10 @@ static
 list_t *newList() {
 	list_t *list;
 
-	list = malloc(sizeof(struct list_s));
+	list = (list_t*)malloc(sizeof(struct list_s));
 	assert(list != NULL);
 	
-	list->header = malloc(sizeof(struct node_s));
+	list->header = (node_t*)malloc(sizeof(struct node_s));
 	assert(list->header != NULL);
 		
 	return list;
@@ -345,9 +419,9 @@ int main(void) {
 
 	//list_link_sort();
 	
-	merge3_test();
+	//merge3_test();
 
-	return 0;
+	//return 0;
 
 	//int a[5] = {1,2,3,4,5};
 
@@ -362,7 +436,18 @@ int main(void) {
 	//pc = newList();
 	//old_pc = pc;
 
+	list_add2head(&pa, 10);
+	list_add2head(&pa, 7);
 
+	node_t *temp = createNode(5);
+	pa->header->next->next->next = temp;
+	pb->header->next = temp;
+
+	temp = createNode(9);
+	pa->header->next->next->next->next = temp;
+	pb->header->next->next = temp;
+
+	/*
 	list_add2head(&pa, 10);
 	list_add2head(&pa, 7);
 	list_add2head(&pa, 1);
@@ -370,22 +455,35 @@ int main(void) {
 	list_add2head(&pb, 19);
 	list_add2head(&pb, 6);
 	list_add2head(&pb, 2);
+	*/
 
 	list_travel(pa);
 	list_travel(pb);
 
-	merge2(pa, pb, &pc);
+	int32_t is_crossed = 0;
+	node_t *crossed = NULL;
+	is_crossed = check_cross(pa, pb, &crossed);
+
+	printf("pa and pb is_crossed: %d\n", is_crossed);
+	if(crossed != NULL) {
+		while(crossed != NULL) {
+			printf("crossed node address: %p, value: %d\n", crossed, crossed->data);
+			crossed = crossed->next;
+		}
+	}
+
+	//merge2(pa, pb, &pc);
 	//merge(pa, pb, pc);
 
-	list_travel(pc);
+	//list_travel(pc);
 
 	destory_list(pa);
 	//destory_list(old_pc);
-	//destory_list(pb);
+	destory_list(pb);
 
 	free(pa);
 	//free(old_pc);
-	//free(pb);
+	free(pb);
 
 	return 0;	
 }

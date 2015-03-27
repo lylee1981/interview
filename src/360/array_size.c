@@ -5,11 +5,10 @@
 
 int main(void) {
 
-	char       str1[7] = "abcdefg";
+	char       str1[8] = "abcdefyw";
 	//char       str1[] = "abcdefg";
-	char       str2[] = {'a', 'b','c','d', 'e', 'f','g', '\0'};
-	char  *a = "xxx";
-	char       str3[] = "120345";
+	char       str2[] = {'a', 'b','c','d', 'e', 'f','g', 'l'};
+	char       str3[] = "1203456";
 	size_t str1_size = sizeof(str1);
 	size_t str2_size = sizeof(str2);
 	//size_t str3_size = sizeof(str3);
