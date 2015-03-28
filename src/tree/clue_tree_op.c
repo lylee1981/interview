@@ -9,6 +9,7 @@ struct findResult {
 	tclue_node_t     *node;	//equal node or 
 };
 
+
 static void printTreeNode(tclue_node_t *node);
 
 static void freeTreeNode(tclue_node_t *node);
@@ -126,6 +127,37 @@ preOrderTraversal(tclue_node_t *node) {
 	}
 }
 
+
+void 
+changeTree2List(tclue_node_t *node, tree2list_t *container) {
+	if (node) {
+		changeTree2List(node->left, container);
+		container->p->next = node;
+		container->p = node;
+		//printTreeNode(node);
+		changeTree2List(node->right, container);
+	}
+}
+
+/*
+
+can't change head value, this method invalid
+
+void 
+changeTree2List(tclue_node_t *node, tclue_node_t **head) {
+	if (node) {
+		changeTree2List(node->left, head);
+		(*head)->next = node;
+		head = &node;
+		//(*list)->next = node;
+		//list = &node;
+		//printTreeNode(node);
+		changeTree2List(node->right, head);
+	}
+}
+
+*/
+
 void 
 inOrderTraversal(tclue_node_t *node) {
 	if (node) {
@@ -170,8 +202,8 @@ tclue_node_t * findLeastCommonParent(tclue_node_t *node1,
 
 	unsigned int data1, data2;
 	unsigned int depth1, depth2, diff;
-	int pa_deeper, pb_depper;
-	tcule_node_t *pa, *pb, *pc;
+	int pa_deeper, pb_deeper;
+	tclue_node_t *pa, *pb, *pc, *common_parent;
 
 	if (node1 == NULL || node2 == NULL) {
 		return NULL;
@@ -199,26 +231,30 @@ tclue_node_t * findLeastCommonParent(tclue_node_t *node1,
 		//move diff depth for two node has same depth
 		while(diff) {
 			pc = pc->parent;
-			diff--
+			diff--;
 		}
 		
 		// reset pa and pb pointer
 		if (pa_deeper) {
-			
 			pa = pc;
 
 		} else if(pb_deeper) {
-			
 			pb = pc;
 		}
 	}
 
+	common_parent = NULL;
 	while( pa && pb ) {
 
+		if( pa->parent == pb->parent ) {
+			common_parent = pa->parent;
+			break;
+		}
+		pa = pa->parent;
+		pb = pb->parent;
 	}	
 
-	return NULL;
-
+	return common_parent;
 }
 
 tclue_node_t *
@@ -275,8 +311,33 @@ int main(int argc, char *argv[]) {
 	printf("\npostOrder result:\n");
 	postOrderTraversal(root);
 
+	tree2list_t container;
+	container.head = createTreeNode(NULL, (void *)1000);
+	container.p = container.head;
+	tclue_node_t *current;
+	changeTree2List(root, &container);
+	printf("\nafter change clue-tree 2 single list, traversal list result:\n\n");
+	current = container.head->next;
+	while(current) {
+		printTreeNode(current);
+		current = current->next;
+	}
 
-	/*
+	/* 
+
+	tclue_node_t *head;
+	head = createTreeNode(NULL, (void *)1000);
+	tclue_node_t *current;
+	changeTree2List(root, &head);
+	printf("\nafter change clue-tree 2 single list, traversal list result:\n\n");
+	current = head->next;
+	while(current) {
+		printTreeNode(current);
+		current = current->next;
+	}
+	free(head);
+
+	*/
 
 	printf("\nfind node test result:\n");
 
@@ -289,7 +350,7 @@ int main(int argc, char *argv[]) {
 		printTreeNode(node1);
 	}
 
-	val = (void *)20;
+	val = (void *)15;
 	printf("find node with data: %u\n", (unsigned int)val);
 	node2 = findNodeBy(root, val);
 	if (node2 != NULL ) {
@@ -307,12 +368,10 @@ int main(int argc, char *argv[]) {
 	printf("\nfind least common parent node test result:\n");
 	
 	tclue_node_t   *common_parent = NULL;
-	common_parent = findLeastCommonParent(root, node1, node2, NULL);
+	common_parent = findLeastCommonParent(node1, node2);
 	if (common_parent != NULL ) {
 		printTreeNode(common_parent);
 	}
-
-	*/
 
 	destoryTree(root);
 	return 0;
