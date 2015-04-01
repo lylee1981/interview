@@ -345,9 +345,10 @@ int main(void) {
 
 	//list_link_sort();
 	
-	merge3_test();
+	//merge3_test();
 
-	return 0;
+
+	//return 0;
 
 	//int a[5] = {1,2,3,4,5};
 

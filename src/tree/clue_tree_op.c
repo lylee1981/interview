@@ -1,5 +1,13 @@
 #include "clue_tree_op.h"
 
+
+#include <vector>
+#include <map>
+#include <queue>
+#include <iostream>
+
+using namespace std;
+
 typedef struct findResult findResult_t;
 
 struct findResult {
@@ -177,6 +185,145 @@ postOrderTraversal(tclue_node_t *node) {
 }
 
 
+void 
+levelTraversalOnOneLine(tclue_node_t *node) {
+
+    queue<tclue_node_t *> q;
+    tclue_node_t *p;
+    q.push(node);
+    q.push(NULL);
+
+    while (q.front() != NULL) {
+        p = q.front();
+        cout << (unsigned int)p->data << " ";
+        q.pop();
+
+        if (p->left) {
+            q.push(p->left);
+        }
+
+        if (p->right) {
+            q.push(p->right);
+        }
+
+        if (q.front() == NULL) { // this level 's node has been processed
+            cout << endl;
+            q.pop();
+            q.push(NULL);
+        }
+    }
+
+    cout << "levelTraversal on one line down" << endl;
+}
+
+void 
+levelTraversal(tclue_node_t *node) {
+
+    queue<tclue_node_t *> q;
+    tclue_node_t *p;
+    q.push(node);
+
+    while (!q.empty()) {
+        p = q.front();
+        cout << "item: " << (unsigned int)p->data << endl;
+        q.pop();
+
+        if (p->left) {
+            q.push(p->left);
+        }
+
+        if (p->right) {
+            q.push(p->right);
+        }
+    }
+
+    cout << "levelTraversal down" << endl;
+}
+
+
+void 
+changeTreeByNext2(tclue_node_t *node) {
+
+    tclue_node_t *p, *temp;
+    queue<tclue_node_t *> q, q2;
+
+    node->next = NULL;
+    q.push(node);
+    q.push(NULL);
+
+    while (q.front() != NULL) {
+        p = q.front();
+        q.pop();
+
+        if (p->left) {
+            q.push(p->left);
+            q2.push(p->left);
+        }
+
+        if (p->right) {
+            q.push(p->right);
+            q2.push(p->right);
+        }
+
+        if (q.front() == NULL) {
+
+            // process next pointer
+            q.pop();
+            q.push(NULL);
+            q2.push(NULL);
+            
+            temp = q2.front();
+            while (temp != NULL) {
+
+            }
+        }
+    }
+
+}
+
+void 
+changeTreeByNext(tclue_node_t *node) {
+
+    tclue_node_t *p, *temp;
+    queue<tclue_node_t *> q,  qsub;
+
+    node->next = NULL;
+    q.push(node);
+
+    while (!q.empty()) {
+        p = q.front();
+        q.pop();
+
+        if (p->left) {
+            p->left->next = p->right;
+            
+            q.push(p->left);
+        }
+
+        if (p->right) {
+            temp = NULL;
+
+            if (!qsub.empty()) {
+
+                temp = qsub.front();
+                qsub.pop();
+            }
+
+            if (p->right->left) {
+                qsub.push(p->right);
+            }
+
+            if (temp) {
+                p->right->next = temp->left;
+            } else {
+                p->right->next = NULL;
+            }
+
+            q.push(p->right);
+        }
+    }
+}
+
 static unsigned int getDepthByNode(tclue_node_t *node);
 
 static unsigned int 
@@ -285,7 +432,25 @@ findNodeBy(tclue_node_t *node, void *data) {
 	return target;
 }
 
+static void using_stl_queue_test()
+{
+    cout << "using STL queue" << endl;
+
+    queue<int> q;
+    q.push(1);
+    q.push(2);
+    cout << "queue is empty? " << q.empty() << endl;
+
+    while (!q.empty()) {
+        cout << "queue item: " << q.front() << endl;
+        q.pop();
+    }
+}
+
 int main(int argc, char *argv[]) {
+
+    //using_stl_queue_test();
+    //return 0;
 
 	tclue_node_t        *root;
 	
@@ -294,13 +459,22 @@ int main(int argc, char *argv[]) {
 	root = createTreeNode(NULL, (void *)15);
 	
 	node = insertTreeNode(root, (void *)7);
-	
-	node = insertTreeNode(root, (void *)1);
-	node = insertTreeNode(root, (void *)2);
-	node = insertTreeNode(root, (void *)9);
-
 	node = insertTreeNode(root, (void *)20);
+	
+
+	node = insertTreeNode(root, (void *)3);
+	node = insertTreeNode(root, (void *)9);
 	node = insertTreeNode(root, (void *)17);
+	node = insertTreeNode(root, (void *)22);
+
+	node = insertTreeNode(root, (void *)1);
+	node = insertTreeNode(root, (void *)4);
+	node = insertTreeNode(root, (void *)8);
+	node = insertTreeNode(root, (void *)10);
+	node = insertTreeNode(root, (void *)16);
+	node = insertTreeNode(root, (void *)18);
+	node = insertTreeNode(root, (void *)21);
+	node = insertTreeNode(root, (void *)23);
 
 	printf("\npreOrder result:\n");
 	preOrderTraversal(root);
@@ -311,6 +485,14 @@ int main(int argc, char *argv[]) {
 	printf("\npostOrder result:\n");
 	postOrderTraversal(root);
 
+	printf("\nlevelOrder result:\n");
+	levelTraversal(root);
+
+	printf("\nlevelOrder on one line result:\n");
+	levelTraversalOnOneLine(root);
+
+
+    //change tree to list by using next pointer for in-order traversal
 	tree2list_t container;
 	container.head = createTreeNode(NULL, (void *)1000);
 	container.p = container.head;
@@ -322,6 +504,30 @@ int main(int argc, char *argv[]) {
 		printTreeNode(current);
 		current = current->next;
 	}
+
+
+    //change tree by using next pointer for level-order traversal
+    cout << "after changeTreeByNext" << endl;
+    changeTreeByNext(root);
+    tclue_node_t *current2, *t;
+    unsigned int index = 0;
+    current = root;
+    while (current != NULL) {
+        cout << "level" << index << " ";
+        current2 = current;
+        while(current2 != NULL) {
+            cout << (unsigned int)current2->data << " ";
+            current2 = current2->next;
+        }
+        cout << endl;
+        index++;
+
+        t = current->right;
+        current = current->left;
+        if (current == NULL) {
+            current = t;
+        }
+    }
 
 	/* 
 
