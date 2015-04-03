@@ -10,6 +10,9 @@ void preOrderTraversal(tnode_t *node);
 void inOrderTraversal(tnode_t *node);
 void postOrderTraversal(tnode_t *node);
 
+void nonRecursiveTraversal(tnode_t *node);
+
+
 void destoryTree(tnode_t *root);
 
 tnode_t *findLeastCommonParent(tnode_t *node, tnode_t *node1, tnode_t *node2, tnode_t *parent);

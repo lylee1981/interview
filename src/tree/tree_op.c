@@ -1,7 +1,7 @@
-
-
-
 #include "tree_op.h"
+#include <stack>
+
+using namespace std;
 
 typedef struct findResult findResult_t;
 
@@ -116,6 +116,38 @@ insertTreeNode(tnode_t *root, void *data) {
 	}
 
 	return node;
+}
+
+void 
+nonRecursiveTraversal(tnode_t *node) {
+
+    std::stack<tnode_t*> s;
+    tnode_t *p, *curr;
+    p = node;
+    
+begin:    
+    while (p) {
+        s.push(p);
+        p = p->left;
+    }
+
+checkstack:
+    curr = s.top();
+    s.pop();
+    p = curr;
+    printf("%u\n", (unsigned int)curr->data);
+
+    if (p->right == NULL) {
+        goto checkstack;
+    }
+
+    while (p->right) {
+        s.push(p->right);
+        p = p->left;
+        goto begin;
+    }
+
+    printf("down\n");
 }
 
 void 
@@ -239,6 +271,8 @@ int main(int argc, char *argv[]) {
 	printf("\npostOrder result:\n");
 	postOrderTraversal(root);
 
+	printf("\nnonRecursive Order result:\n");
+	nonRecursiveTraversal(root);
 
 
 	printf("\nfind node test result:\n");

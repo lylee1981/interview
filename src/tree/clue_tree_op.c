@@ -241,6 +241,40 @@ levelTraversal(tclue_node_t *node) {
 }
 
 
+void changeTreeByNext3(tclue_node_t *root)
+{
+    if (root == NULL)
+        return;
+    tclue_node_t *p = root;
+    root->next = NULL;
+    tclue_node_t *tmp = root->left;
+    while(p){
+        if (p->right!=NULL){
+            if (p->next!=NULL){
+                //p->right->next = NULL; // old code
+                p->right->next = p->next->left; // new code
+                p->left->next = p->right;
+            }else{
+                //p->right->next = p->next->left;  // old code
+                p->right->next = NULL;  // new code
+                p->left->next = p->right;
+            }
+        } else if (p->left!=NULL){
+            p->left->next = NULL;    // new code
+            //p->left->right = NULL; // old code
+        }
+        p = p->next;
+        if (p == NULL){
+            if (tmp!=NULL){
+                p = tmp;
+                tmp = tmp->left;
+            }else{
+                return ;
+            }
+        }
+    }
+}
+
 void 
 changeTreeByNext2(tclue_node_t *node) {
 
@@ -508,7 +542,7 @@ int main(int argc, char *argv[]) {
 
     //change tree by using next pointer for level-order traversal
     cout << "after changeTreeByNext" << endl;
-    changeTreeByNext(root);
+    changeTreeByNext3(root);
     tclue_node_t *current2, *t;
     unsigned int index = 0;
     current = root;

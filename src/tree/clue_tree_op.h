@@ -29,6 +29,7 @@ void changeTree2List(tclue_node_t *node, tree2list_t *container);
 
 void changeTreeByNext(tclue_node_t *node);
 void changeTreeByNext2(tclue_node_t *node);
+void changeTreeByNext3(tclue_node_t *node);
 
 //this method 's parameter can't implementation
 //void changeTree2List(tclue_node_t *node, tclue_node_t **head);
